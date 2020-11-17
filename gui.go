@@ -606,9 +606,13 @@ func (g *Gui) onKey(ev *termbox.Event) error {
 		if err != nil {
 			break
 		}
-		if err := v.SetCursor(mx-v.x0-1, my-v.y0-1); err != nil {
-			return err
+
+		if !v.MouseDisable {
+			if err := v.SetCursor(mx-v.x0-1, my-v.y0-1); err != nil {
+				return err
+			}
 		}
+
 		if _, err := g.execKeybindings(v, ev); err != nil {
 			return err
 		}

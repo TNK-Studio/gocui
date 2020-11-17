@@ -71,6 +71,9 @@ type View struct {
 	// If Mask is true, the View will display the mask instead of the real
 	// content
 	Mask rune
+
+	// If MouseDisable is true, the View will not move cursor when mouse click.
+	MouseDisable bool
 }
 
 type viewLine struct {
