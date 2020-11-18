@@ -74,6 +74,9 @@ type View struct {
 
 	// If MouseDisable is true, the View will not move cursor when mouse click.
 	MouseDisable bool
+
+	// If cursor was changed, it will be called.
+	OnCursorChange func(v *View, x, y int) error
 }
 
 type viewLine struct {
@@ -169,8 +172,21 @@ func (v *View) SetCursor(x, y int) error {
 	if x < 0 || x >= maxX || y < 0 || y >= maxY {
 		return errors.New("invalid point")
 	}
+
+	cursorChanged := false
+	if v.cx != x || v.cy != y {
+		cursorChanged = true
+	}
+
 	v.cx = x
 	v.cy = y
+
+	if cursorChanged && v.OnCursorChange != nil {
+		if err := v.OnCursorChange(v, x, y); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
