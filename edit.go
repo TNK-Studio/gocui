@@ -4,7 +4,9 @@
 
 package gocui
 
-import "errors"
+import (
+	"errors"
+)
 
 const maxInt = int(^uint(0) >> 1)
 
@@ -117,6 +119,10 @@ func (v *View) EditNewLine() {
 // displacing the origin if necessary.
 func (v *View) MoveCursor(dx, dy int, writeMode bool) {
 	maxX, maxY := v.Size()
+
+	// Origin cursor
+	ocx, ocy := v.cx, v.cy
+
 	cx, cy := v.cx+dx, v.cy+dy
 	x, y := v.ox+cx, v.oy+cy
 
@@ -155,7 +161,7 @@ func (v *View) MoveCursor(dx, dy int, writeMode bool) {
 				}
 				v.cx = 0
 			}
-		} else { // vertical movement
+		} else {                  // vertical movement
 			if curLineWidth > 0 { // move cursor to the EOL
 				if v.Wrap {
 					v.cx = curLineWidth
@@ -227,6 +233,11 @@ func (v *View) MoveCursor(dx, dy int, writeMode bool) {
 		} else {
 			v.cy = cy
 		}
+	}
+
+	if (ocx != v.cx || ocy != v.cy) && v.OnCursorChange != nil {
+		// Todo: error
+		v.OnCursorChange(v, v.cx, v.cy)
 	}
 }
 
